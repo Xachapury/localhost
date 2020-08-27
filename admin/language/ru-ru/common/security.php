@@ -1,29 +1,26 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 // Heading
-$_['heading_title']    = 'Важное уведомление о безопасности!';
+$_['heading_title']    = 'Важное сообщение безопасности!';
 
 // Text
-$_['text_success']     = 'Настройки успешно изменены!';
-$_['text_security']    = 'Очень важно, чтобы вы переместили каталог storage за пределы веб-каталога (например, public_html, www или htdocs).';
-$_['text_choose']      = 'Выберите способ перемещения каталога storage';
+$_['text_success']     = 'Хранилище storage успешно изменено!';
+$_['text_admin']       = 'Откройте файл admin/config.php и измените его';
+$_['text_security']    = 'Внимание! Это важно. Для большей безопасности вы должны переместить директорию хранилища storage за пределы корневой директории сайта <br/> (например в public_html, www или htdocs).';
+$_['text_choose']      = 'Выберите как вы хотите перенести директорию storage';
 $_['text_automatic']   = 'Автоматическое перемещение';
-$_['text_manual']      = 'Переместить вручную';
+$_['text_manual']      = 'Самостоятельное перемещение';
 $_['text_move']        = 'Переместить';
 $_['text_to']          = 'в';
-$_['text_admin']       = 'В файле admin/config.php замените строку';
-$_['text_config']      = 'В файле config.php замените строку';
-$_['text_by']          = 'на';
+$_['text_config']      = 'Откройте файл config.php и измените его';
+$_['text_admin']       = 'Откройте файл admin/config.php и измените его';
 
 // Button
 $_['button_move']      = 'Переместить';
-$_['button_manual']    = 'Вручную';
+$_['button_manual']    = 'Самостоятельно';
 
 // Error
-$_['error_permission'] = 'У вас недостаточно прав для внесения изменений!';
-$_['error_path']       = 'Неверный путь!';
-$_['error_directory']  = 'Неверный каталог!';
-$_['error_exists']     = 'Каталог уже существует!';
-$_['error_writable']   = 'config.php and admin/config.php Должны быть доступны для записи!';
+$_['error_permission'] = 'Внимание: У Вас нет прав для изменения директории хранилища!';
+$_['error_path']       = 'Внимание: Некорректный путь!';
+$_['error_directory']  = 'Внимание: Некорректная директория!';
+$_['error_exists']     = 'Внимание: Директория уже существует!';
+$_['error_writable']   = 'Внимание: для config.php и admin/config.php необходимы права записи!';

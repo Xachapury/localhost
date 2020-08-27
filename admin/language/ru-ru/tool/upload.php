@@ -1,24 +1,22 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 // Heading
-$_['heading_title']     = 'Загрузки';
+$_['heading_title']     = 'Внешние загрузки';
 
 // Text
-$_['text_success']      = 'Настройки успешно изменены!';
-$_['text_list']         = 'Список загрузок';
+$_['text_success']      = 'Выполнено!';
+$_['text_list']         = 'Внешние загрузки';
 
 // Column
-$_['column_name']       = 'Название';
-$_['column_filename']   = 'Имя файла';
+$_['column_name']       = 'Название Файла';
+$_['column_filename']   = 'Имя Файла';
 $_['column_date_added'] = 'Дата добавления';
 $_['column_action']     = 'Действие';
 
 // Entry
-$_['entry_name']        = 'Название';
-$_['entry_filename']    = 'Имя файла';
-$_['entry_date_added'] 	= 'Дата добавления';
+$_['entry_name']        = 'Название Файла';
+$_['entry_filename']    = 'Имя Файла';
+$_['entry_date_added']  = 'Дата добавления';
 
 // Error
-$_['error_permission']  = 'У вас недостаточно прав для внесения изменений!';
+$_['error_permission']  = 'У Вас нет прав для управления данным модулем!';
+

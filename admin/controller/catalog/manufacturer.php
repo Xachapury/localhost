@@ -1,7 +1,4 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 class ControllerCatalogManufacturer extends Controller {
 	private $error = array();
 
@@ -179,8 +176,6 @@ class ControllerCatalogManufacturer extends Controller {
 				'manufacturer_id' => $result['manufacturer_id'],
 				'name'            => $result['name'],
 				'sort_order'      => $result['sort_order'],
-				'noindex'  	  	  => $result['noindex'],
-				'href_shop'  	  => HTTP_CATALOG . 'index.php?route=product/manufacturer/info&manufacturer_id=' . ($result['manufacturer_id']),
 				'edit'            => $this->url->link('catalog/manufacturer/edit', 'user_token=' . $this->session->data['user_token'] . '&manufacturer_id=' . $result['manufacturer_id'] . $url, true)
 			);
 		}
@@ -219,8 +214,7 @@ class ControllerCatalogManufacturer extends Controller {
 
 		$data['sort_name'] = $this->url->link('catalog/manufacturer', 'user_token=' . $this->session->data['user_token'] . '&sort=name' . $url, true);
 		$data['sort_sort_order'] = $this->url->link('catalog/manufacturer', 'user_token=' . $this->session->data['user_token'] . '&sort=sort_order' . $url, true);
-		$data['sort_noindex'] = $this->url->link('catalog/manufacturer', 'user_token=' . $this->session->data['user_token'] . '&sort=noindex' . $url, true);
- 
+
 		$url = '';
 
 		if (isset($this->request->get['sort'])) {
@@ -264,18 +258,6 @@ class ControllerCatalogManufacturer extends Controller {
 			$data['error_name'] = $this->error['name'];
 		} else {
 			$data['error_name'] = '';
-		}
-		
-		if (isset($this->error['meta_title'])) {
-			$data['error_meta_title'] = $this->error['meta_title'];
-		} else {
-			$data['error_meta_title'] = array();
-		}
-		
-		if (isset($this->error['meta_h1'])) {
-			$data['error_meta_h1'] = $this->error['meta_h1'];
-		} else {
-			$data['error_meta_h1'] = array();
 		}
 
 		if (isset($this->error['keyword'])) {
@@ -323,16 +305,6 @@ class ControllerCatalogManufacturer extends Controller {
 		}
 
 		$data['user_token'] = $this->session->data['user_token'];
-		
-		$this->load->model('localisation/language');
-		$data['languages'] = $this->model_localisation_language->getLanguages();
-		if (isset($this->request->post['manufacturer_description'])) {
-			$data['manufacturer_description'] = $this->request->post['manufacturer_description'];
-		} elseif (isset($this->request->get['manufacturer_id'])) {
-			$data['manufacturer_description'] = $this->model_catalog_manufacturer->getManufacturerDescriptions($this->request->get['manufacturer_id']);
-		} else {
-			$data['manufacturer_description'] = array();
-		}
 
 		if (isset($this->request->post['name'])) {
 			$data['name'] = $this->request->post['name'];
@@ -340,12 +312,6 @@ class ControllerCatalogManufacturer extends Controller {
 			$data['name'] = $manufacturer_info['name'];
 		} else {
 			$data['name'] = '';
-		}
-		
-		if (!empty($manufacturer_info)) {
-			$data['heading_title'] = $data['name'] = $manufacturer_info['name'];
-		} else {
-			$data['heading_title'] = $this->language->get('heading_title');
 		}
 
 		$this->load->model('setting/store');
@@ -393,25 +359,6 @@ class ControllerCatalogManufacturer extends Controller {
 		}
 
 		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
-		
-		if (isset($this->request->post['noindex'])) {
-			$data['noindex'] = $this->request->post['noindex'];
-		} elseif (!empty($manufacturer_info)) {
-			$data['noindex'] = $manufacturer_info['noindex'];
-		} else {
-			$data['noindex'] = 1;
-		}
-		
-		if (isset($this->request->post['manufacturer_layout'])) {
-			$data['manufacturer_layout'] = $this->request->post['manufacturer_layout'];
-		} elseif (isset($this->request->get['manufacturer_id'])) {
-			$data['manufacturer_layout'] = $this->model_catalog_manufacturer->getManufacturerLayouts($this->request->get['manufacturer_id']);
-		} else {
-			$data['manufacturer_layout'] = array();
-		}
-		$this->load->model('design/layout');
-		
-		$data['layouts'] = $this->model_design_layout->getLayouts();
 
 		if (isset($this->request->post['sort_order'])) {
 			$data['sort_order'] = $this->request->post['sort_order'];
@@ -419,52 +366,6 @@ class ControllerCatalogManufacturer extends Controller {
 			$data['sort_order'] = $manufacturer_info['sort_order'];
 		} else {
 			$data['sort_order'] = '';
-		}
-		
-		if (isset($this->request->post['product_related'])) {
-			$products = $this->request->post['product_related'];
-		} elseif (isset($manufacturer_info)) {		
-			$products = $this->model_catalog_manufacturer->getProductRelated($this->request->get['manufacturer_id']);
-		} else {
-			$products = array();
-		}		
-
-		$data['product_related'] = array();
-			
-		$this->load->model('catalog/product');
-		
-		foreach ($products as $product_id) {
-			$related_info = $this->model_catalog_product->getProduct($product_id);
-			
-			if ($related_info) {
-				$data['product_related'][] = array(
-					'product_id' => $related_info['product_id'],
-					'name'       => $related_info['name']
-				);
-			}
-		}
-
-		if (isset($this->request->post['article_related'])) {
-			$articles = $this->request->post['article_related'];
-		} elseif (isset($manufacturer_info)) {		
-			$articles = $this->model_catalog_manufacturer->getArticleRelated($this->request->get['manufacturer_id']);
-		} else {
-			$articles = array();
-		}		
-
-		$data['article_related'] = array();
-			
-		$this->load->model('blog/article');
-		
-		foreach ($articles as $article_id) {
-			$related_info = $this->model_blog_article->getArticle($article_id);
-			
-			if ($related_info) {
-				$data['article_related'][] = array(
-					'article_id' => $related_info['article_id'],
-					'name'       => $related_info['name']
-				);
-			}
 		}
 
 		$this->load->model('localisation/language');
@@ -493,16 +394,6 @@ class ControllerCatalogManufacturer extends Controller {
 
 		if ((utf8_strlen($this->request->post['name']) < 1) || (utf8_strlen($this->request->post['name']) > 64)) {
 			$this->error['name'] = $this->language->get('error_name');
-		}
-		
-		foreach ($this->request->post['manufacturer_description'] as $language_id => $value) {
-			if ((utf8_strlen($value['meta_title']) < 0) || (utf8_strlen($value['meta_title']) > 255)) {
-				$this->error['meta_title'][$language_id] = $this->language->get('error_meta_title');
-			}
-			
-			if ((utf8_strlen($value['meta_h1']) < 0) || (utf8_strlen($value['meta_h1']) > 255)) {
-				$this->error['meta_h1'][$language_id] = $this->language->get('error_meta_h1');
-			}
 		}
 
 		if ($this->request->post['manufacturer_seo_url']) {

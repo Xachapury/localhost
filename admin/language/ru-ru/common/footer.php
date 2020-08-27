@@ -1,7 +1,5 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 // Text
-$_['text_footer'] 	= '<a target="_blank" href="https://ocstore.com/">ocStore</a> &copy; 2009-' . date('Y') . ' Все права защищены.';
-$_['text_version'] 	= 'Версия ocStore %s';
+$_['text_footer']  = '<HR><a href="https://www.opencart.ru">OpenCart</a><br> <BR> &nbsp;&nbsp;&nbsp;<a href="https://www.opencart.ru/documentation" target="_blank">Документация</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://www.opencart.ru/modules" target="_blank">Маркетплейс</a>';
+$_['text_version'] = 'Version %s';
+

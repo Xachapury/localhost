@@ -1,20 +1,19 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 // Heading
-$_['heading_title']         = 'Отчет по бонусным баллам покупателя';
+$_['heading_title']         = 'Баллы клиентов';
 
 // Text
-$_['text_list']             = 'Список бонусных баллов';
-$_['text_filter']       	= 'Фильтр';
+$_['text_extension']        = 'Расширения';
+$_['text_edit']             = 'Редактирование';
+$_['text_success']          = 'Настройки успешно изменены!';
+$_['text_filter']           = 'Фильтр';
 
 // Column
-$_['column_customer']       = 'Имя покупателя';
+$_['column_customer']       = 'Клиент';
 $_['column_email']          = 'E-Mail';
-$_['column_customer_group'] = 'Группа покупателей';
+$_['column_customer_group'] = 'Группа';
 $_['column_status']         = 'Статус';
-$_['column_points']         = 'Бонусные баллы';
+$_['column_points']         = 'Баллы';
 $_['column_orders']         = 'Кол-во заказов';
 $_['column_total']          = 'Итого';
 $_['column_action']         = 'Действие';
@@ -22,4 +21,10 @@ $_['column_action']         = 'Действие';
 // Entry
 $_['entry_date_start']      = 'Дата начала';
 $_['entry_date_end']        = 'Дата окончания';
-$_['entry_customer']		= 'Имя покупателя';
+$_['entry_customer']        = 'Клиент';
+$_['entry_status']          = 'Статус';
+$_['entry_sort_order']      = 'Порядок сортировки';
+
+// Error
+$_['error_permission']  = 'У Вас нет прав для управления модулем!';
+

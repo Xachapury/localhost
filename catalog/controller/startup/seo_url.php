@@ -1,34 +1,14 @@
-<?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
+<?php 
 class ControllerStartupSeoUrl extends Controller {
-	
-	//seopro start
-		private $seo_pro;
-		public function __construct($registry) {
-			parent::__construct($registry);	
-			$this->seo_pro = new SeoPro($registry);
-		}
-	//seopro end
-	
 	public function index() {
-
 		// Add rewrite to url class
 		if ($this->config->get('config_seo_url')) {
 			$this->url->addRewrite($this);
 		}
-		
-	
+
 		// Decode URL
 		if (isset($this->request->get['_route_'])) {
 			$parts = explode('/', $this->request->get['_route_']);
-			
-		//seopro prepare route
-		if($this->config->get('config_seo_pro')){		
-			$parts = $this->seo_pro->prepareRoute($parts);
-		}
-		//seopro prepare route end
 
 			// remove any empty arrays from trailing
 			if (utf8_strlen(end($parts)) == 0) {
@@ -65,9 +45,7 @@ class ControllerStartupSeoUrl extends Controller {
 						$this->request->get['route'] = $query->row['query'];
 					}
 				} else {
-					if(!$this->config->get('config_seo_pro')){		
-						$this->request->get['route'] = 'error/not_found';
-					}
+					$this->request->get['route'] = 'error/not_found';
 
 					break;
 				}
@@ -84,38 +62,58 @@ class ControllerStartupSeoUrl extends Controller {
 					$this->request->get['route'] = 'information/information';
 				}
 			}
+		// Redirect 301   
+		} elseif (isset($this->request->get['route']) && empty($this->request->post) && !isset($this->request->get['token']) && $this->config->get('config_seo_url')) {
+			$arg = '';
+			$cat_path = false;
+			$route = $this->request->get['route'];
+
+			if ($this->request->get['route'] == 'product/product' && isset($this->request->get['product_id'])) {
+				$route = 'product_id=' . (int)$this->request->get['product_id'];
+			} elseif ($this->request->get['route'] == 'product/category' && isset($this->request->get['path'])) {
+				$categorys_id = explode('_', $this->request->get['path']);
+				$cat_path = '';
+				foreach ($categorys_id as $category_id) {
+					$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "seo_url` WHERE `query` = 'category_id=" . (int)$category_id . "' AND `store_id` = '" . (int)$this->config->get('config_store_id') . "' AND `language_id` = '" . (int)$this->config->get('config_language_id') . "'");   
+					if ($query->num_rows && $query->row['keyword'] /**/ ) {
+						$cat_path .= '/' . $query->row['keyword'];
+					} else {
+						$cat_path = false;
+						break;
+					}
+				}
+				$arg = trim($cat_path, '/');
+				if (isset($this->request->get['page'])) $arg = $arg . '?page=' . (int)$this->request->get['page'];
+			} elseif ($this->request->get['route'] == 'product/manufacturer/info' && isset($this->request->get['manufacturer_id'])) {
+				$route = 'manufacturer_id=' . (int)$this->request->get['manufacturer_id'];
+				if (isset($this->request->get['page'])) $arg = $arg . '?page=' . (int)$this->request->get['page'];
+			} elseif ($this->request->get['route'] == 'information/information' && isset($this->request->get['information_id'])) {
+				$route = 'information_id=' . (int)$this->request->get['information_id'];
+			} elseif (sizeof($this->request->get) > 1) {
+				$args = '?' . str_replace("route=" . $this->request->get['route'].'&amp;', "", $this->request->server['QUERY_STRING']);
+				$arg = str_replace('&amp;', '&', $args);
+			}
+
+			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "seo_url` WHERE `query` = '" . $this->db->escape($route) . "' AND `store_id` = '" . (int)$this->config->get('config_store_id') . "' AND `language_id` = '" . (int)$this->config->get('config_language_id') . "'");
+
+			if (!empty($query->num_rows) && !empty($query->row['keyword']) && $route) {
+				$this->response->redirect($query->row['keyword'] . $arg, 301);
+			} elseif ($cat_path) {
+				$this->response->redirect($arg, 301);
+			} elseif ($this->request->get['route'] == 'common/home') {
+				$this->response->redirect(HTTP_SERVER . $arg, 301);
+			}
 		}
-		
-		//seopro validate
-		if($this->config->get('config_seo_pro')){		
-			$this->seo_pro->validate();
-		}
-	//seopro validate
-		
 	}
 
 	public function rewrite($link) {
 		$url_info = parse_url(str_replace('&amp;', '&', $link));
 
-		if($this->config->get('config_seo_pro')){		
-		$url = null;
-			} else {
 		$url = '';
-		}
 
 		$data = array();
 
 		parse_str($url_info['query'], $data);
-		
-		//seo_pro baseRewrite
-		if($this->config->get('config_seo_pro')){		
-			list($url, $data, $postfix) =  $this->seo_pro->baseRewrite($data, (int)$this->config->get('config_language_id'));	
-		}
-		
-		
-
-		
-		//seo_pro baseRewrite
 
 		foreach ($data as $key => $value) {
 			if (isset($data['route'])) {
@@ -143,27 +141,16 @@ class ControllerStartupSeoUrl extends Controller {
 					}
 
 					unset($data[$key]);
+				} elseif ($key == 'route') {
+					$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "seo_url WHERE `query` = '" . $this->db->escape($data['route']) . "' AND store_id = '" . (int)$this->config->get('config_store_id') . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+					if ($query->num_rows) /**/ {
+						$url .= '/' . $query->row['keyword'];
+					}
 				}
 			}
 		}
 
-		//seo_pro add blank url
-		if($this->config->get('config_seo_pro')) {		
-			$condition = ($url !== null);
-		} else {
-			$condition = $url;
-		}
-
-		if ($condition) {
-			if($this->config->get('config_seo_pro')){		
-				if($this->config->get('config_page_postfix') && $postfix) {
-					$url .= $this->config->get('config_page_postfix');
-				} elseif($this->config->get('config_seopro_addslash')) {
-					$url .= '/';
-				} 
-			}
-			
-		//seo_pro add blank url
+		if ($url) {
 			unset($data['route']);
 
 			$query = '';

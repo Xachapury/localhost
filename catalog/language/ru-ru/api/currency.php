@@ -1,10 +1,8 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 // Text
-$_['text_success']     = 'Ваша валюта успешно изменена!';
+$_['text_success']     = 'Success: Your currency has been changed!';
 
 // Error
-$_['error_permission'] = 'Вы не имеете разрешения на доступ к API!';
-$_['error_currency']   = 'Код валюты является недействительным!';
+$_['error_permission'] = 'Warning: You do not have permission to access the API!';
+$_['error_currency']   = 'Warning: Currency code is invalid!';
+

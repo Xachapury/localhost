@@ -1,7 +1,4 @@
 <?php
-// *	@source		See SOURCE.txt for source and other copyright.
-// *	@license	GNU General Public License version 3; see LICENSE.txt
-
 class ControllerExtensionExtensionModule extends Controller {
 	private $error = array();
 
@@ -98,7 +95,6 @@ class ControllerExtensionExtensionModule extends Controller {
 
 	protected function getList() {
 		$data['text_layout'] = sprintf($this->language->get('text_layout'), $this->url->link('design/layout', 'user_token=' . $this->session->data['user_token'], true));
-		$data['text_hide_modules'] = sprintf($this->language->get('text_hide_modules'), $this->url->link('user/user_permission', 'user_token=' . $this->session->data['user_token'], true));
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -134,37 +130,33 @@ class ControllerExtensionExtensionModule extends Controller {
 		// Compatibility code for old extension folders
 		$files = glob(DIR_APPLICATION . 'controller/extension/module/*.php');
 
-		$this->load->model('user/user_group');
-		
-		$user_group_info = $this->model_user_user_group->getUserGroup($this->user->getGroupId());
-
-		if(isset($user_group_info['permission']['hiden'])) {
-			$hiden = $user_group_info['permission']['hiden'];
-		} else {
-			$hiden = array();
-		}
-
-		$data['hiden'] = false;
-
 		if ($files) {
 			foreach ($files as $file) {
 				$extension = basename($file, '.php');
-				
-				
-				if (!in_array('extension/module/' . $extension, $hiden)) {
-					$this->load->language('extension/module/' . $extension, 'extension');
-					$module_data = array();
-					$modules = $this->model_setting_module->getModulesByCode($extension);
-					foreach ($modules as $module) {
-						$module_data[] = array(
+
+				$this->load->language('extension/module/' . $extension, 'extension');
+
+				$module_data = array();
+
+				$modules = $this->model_setting_module->getModulesByCode($extension);
+
+				foreach ($modules as $module) {
+					if ($module['setting']) {
+						$setting_info = json_decode($module['setting'], true);
+					} else {
+						$setting_info = array();
+					}
+					
+					$module_data[] = array(
 						'module_id' => $module['module_id'],
 						'name'      => $module['name'],
 						'status'    => (isset($setting_info['status']) && $setting_info['status']) ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 						'edit'      => $this->url->link('extension/module/' . $extension, 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $module['module_id'], true),
 						'delete'    => $this->url->link('extension/extension/module/delete', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $module['module_id'], true)
 					);
-					}
-					$data['extensions'][] = array(
+				}
+
+				$data['extensions'][] = array(
 					'name'      => $this->language->get('extension')->get('heading_title'),
 					'status'    => $this->config->get('module_' . $extension . '_status') ? $this->language->get('text_enabled') : $this->language->get('text_disabled'),
 					'module'    => $module_data,
@@ -173,24 +165,18 @@ class ControllerExtensionExtensionModule extends Controller {
 					'installed' => in_array($extension, $extensions),
 					'edit'      => $this->url->link('extension/module/' . $extension, 'user_token=' . $this->session->data['user_token'], true)
 				);
-				} else {
-					$data['hiden'] = true;
-				}
 			}
 		}
 
 		$sort_order = array();
 
 		foreach ($data['extensions'] as $key => $value) {
-			if($value['installed']){
-				$add = '0';
-			}else{
-				$add = '1';
-			}
-				$sort_order[$key] = $add.$value['name'];
+			$sort_order[$key] = $value['name'];
 		}
 
 		array_multisort($sort_order, SORT_ASC, $data['extensions']);
+
+		$data['promotion'] = $this->load->controller('extension/extension/promotion');
 
 		$this->response->setOutput($this->load->view('extension/extension/module', $data));
 	}

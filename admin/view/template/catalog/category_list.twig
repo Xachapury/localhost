@@ -2,11 +2,8 @@
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
-      <div class="pull-right"><a href="{{ add }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a> 
-	  <a href="{{ repair }}" data-toggle="tooltip" title="{{ button_rebuild }}" class="btn btn-default"><i class="fa fa-refresh"></i></a>
-		<button type="submit" form="form-category" formaction="{{ enabled }}" data-toggle="tooltip" title="{{ button_enable }}" class="btn btn-default"><i class="fa fa-play"></i></button>
-		<button type="submit" form="form-category" formaction="{{ disabled }}" data-toggle="tooltip" title="{{ button_disable }}" class="btn btn-default"><i class="fa fa-pause"></i></button>
-		<button type="button" form="form-category" formaction="{{ delete }}" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-category').submit() : false;"><i class="fa fa-trash-o"></i></button>
+      <div class="pull-right"><a href="{{ add }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a> <a href="{{ repair }}" data-toggle="tooltip" title="{{ button_rebuild }}" class="btn btn-default"><i class="fa fa-refresh"></i></a>
+        <button type="button" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-category').submit() : false;"><i class="fa fa-trash-o"></i></button>
       </div>
       <h1>{{ heading_title }}</h1>
       <ul class="breadcrumb">
@@ -38,13 +35,16 @@
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
-                  <td class="text-left">{{ column_name }}</td>
-                  <td class="text-right">{{ column_sort_order }}</td>
-				  <td class="text-right">{% if sort == 'noindex' %}
-                    <a href="{{ sort_noindex }}" class="{{ order|lower }}">{{ column_noindex }}</a>
+                  <td class="text-left">{% if sort %}
+                    <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
                     {% else %}
-                    <a href="{{ sort_noindex }}">{{ column_noindex }}</a>
-					{% endif %}</td>
+                    <a href="{{ sort_name }}">{{ column_name }}</a>
+                    {% endif %}</td>
+                  <td class="text-right">{% if sort == 'sort_order' %}
+                    <a href="{{ sort_sort_order }}" class="{{ order|lower }}">{{ column_sort_order }}</a>
+                    {% else %}
+                    <a href="{{ sort_sort_order }}">{{ column_sort_order }}</a>
+                    {% endif %}</td>
                   <td class="text-right">{{ column_action }}</td>
                 </tr>
               </thead>
@@ -57,17 +57,9 @@
                     {% else %}
                     <input type="checkbox" name="selected[]" value="{{ category.category_id }}" />
                     {% endif %}</td>
-				  {% if category.href %}
-                  <td class="left">{{ category.indent }}<a href="{{ category.href }}">{{ category.name }}</a>&nbsp;<i class="fa fa-sort-desc"></i></td>
-					{% else %}
-                  <td class="left">{{ category.indent }}{{ category.name }}</td>
-                  {% endif %}
+                  <td class="text-left">{{ category.name }}</td>
                   <td class="text-right">{{ category.sort_order }}</td>
-				  <td class="text-right">{{ category.noindex }}</td>
-                  <td class="text-right">
-					<a target="_blank" href="{{ category.href_shop }}" data-toggle="tooltip" title="{{ button_shop }}" class="btn btn-success"><i class="fa fa-eye"></i></a>
-					<a href="{{ category.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
-				  </td>
+                  <td class="text-right"><a href="{{ category.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                 </tr>
                 {% endfor %}
                 {% else %}
@@ -80,17 +72,11 @@
           </div>
         </form>
         <div class="row">
-          <div class="col-sm-12 text-right">{{ results }}</div>
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
         </div>
       </div>
     </div>
   </div>
-  
-    <script type="text/javascript"><!--
-// IE and Edge fix!
-$('button[form=\'form-category\']').on('click', function(e) {
-	$('#form-category').attr('action', $(this).attr('formaction'));
-});
- //--></script> 
 </div>
 {{ footer }}
